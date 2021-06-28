@@ -2,18 +2,29 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import Data from "./data.js";
+import Videos from "./dbData.js";
 
 /* App Config */
 const app = express();
 const port = process.env.PORT || 9000;
-const dbConnection =
-  "mongodb+srv://admin:6p7Z9pAaOcIFjyiJ@cluster0.zwx9k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
 
 /* Middlewares */
 app.use(express.json());
 app.use(cors());
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Headers", "*");
+  next();
+});
 
 /* DB Config */
+const dbConnection =
+  "mongodb+srv://admin:6p7Z9pAaOcIFjyiJ@cluster0.zwx9k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+mongoose.connect(dbConnection, {
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+});
 
 /* API Endpoints */
 app.get("/", (req, res) => {
@@ -22,6 +33,28 @@ app.get("/", (req, res) => {
 
 app.get("/v1/posts", (req, res) => {
   res.status(200).send(Data);
+});
+
+app.get("/v2/posts", (req, res) => {
+  Videos.find((err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(200).send(data);
+    }
+  });
+});
+
+app.post("/v2/posts", (req, res) => {
+  const dbVideos = req.body;
+
+  Videos.create(dbVideos, (err, data) => {
+    if (err) {
+      res.status(500).send(err);
+    } else {
+      res.status(201).send(data);
+    }
+  });
 });
 
 /* listen */
