@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 import cors from "cors";
 import Data from "./data.js";
 import Videos from "./dbData.js";
+import "dotenv/config";
 
 /* App Config */
 const app = express();
@@ -18,8 +19,7 @@ app.use((req, res, next) => {
 });
 
 /* DB Config */
-const dbConnection =
-  "mongodb+srv://admin:6p7Z9pAaOcIFjyiJ@cluster0.zwx9k.mongodb.net/myFirstDatabase?retryWrites=true&w=majority";
+const dbConnection = process.env.DB_CONNECTION;
 mongoose.connect(dbConnection, {
   useCreateIndex: true,
   useUnifiedTopology: true,
